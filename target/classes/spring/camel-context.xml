@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:camel="http://camel.apache.org/schema/spring"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+    <!-- Define a traditional camel context here -->
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <endpoint id="responsetx" uri="dozer:responsetx?sourceModel=rpp_1568090201313.BusMsg&amp;targetModel=response.Response&amp;marshalId=transform-json&amp;unmarshalId=rpp_1568090201313&amp;mappingFile=transformation-response.xml"/>
+        <endpoint id="requesttx" uri="dozer:requesttx?sourceModel=rpp_1568087264516.BusMsg&amp;targetModel=request.Request&amp;marshalId=transform-json&amp;unmarshalId=rpp_1568087264516&amp;mappingFile=transformation-request.xml"/>
+        <dataFormats>
+            <jaxb contextPath="rpp_1568087264516" id="rpp_1568087264516"/>
+            <json id="transform-json" library="Jackson"/>
+            <jaxb contextPath="rpp_1568090201313" id="rpp_1568090201313"/>
+<!--             
+        <base64 lineSeparator="&#10;" id="base64withNewLine" />
+        <base64 lineLength="64" id="base64withLineLength64" />
+
+ -->         </dataFormats>
+        <restConfiguration bindingMode="json_xml" component="servlet"/>
+        <rest id="rest-8acee140-1d87-4e9b-80b7-61778296f6e3" path="/rest">
+            <get id="get-58247db3-200b-4b41-bf11-503df970fa6d" consumes="application/json" uri="/test">
+                <to uri="direct:test"/>
+            </get>
+            <!--             <get consumes="application/json"
+                id="get-0fc3373f-e494-4166-a280-9f673a503bcc" uri="/bye">
+                <to uri="direct:bye"/>
+            </get>
+            <post id="post-d5043fb4-b5f5-4625-b70b-9f23fa06a1f8" uri="/bye">
+                <to uri="mock:update"/>
+            </post> -->
+        </rest>
+        <!--         <route id="_route1">
+            <from id="_from1" uri="direct:hello"/>
+            <transform id="_transform1">
+                <constant>Hello World</constant>
+            </transform>
+        </route>
+        <route id="_route2">
+            <from id="_from2" uri="direct:bye"/>
+            <transform id="_transform2">
+                <constant>Bye World</constant>
+            </transform>
+        </route>
+ -->
+        <route id="_route3">
+            <from id="_from3" uri="direct:test"/>
+            <!-- 
+			<to uri="netty4:tcp://192.168.0.101:5000?textline=true&amp;clientMode=true&amp;allowDefaultCodec=false&amp;sync=false&amp;reconnect=false&amp;decoderMaxLineLength=4096"/>
+            <to id="_to1" uri="netty4:tcp://localhost:5021"/>
+			-->
+            <log id="route-log" message="At the beginning of test client >>>"/>
+            <to id="_to1" uri="netty4:tcp://localhost:5021"/>
+            <log id="_log2" message="At the end of netty producer >>> ${body}"/>
+            <log id="_log1" message="message length: ${body.toString().length}"/>
+                    <to id="_to2" uri="ref:responsetx"/>
+            <log id="_log3" message="After transformation >>> ${body}"/>
+            <setBody>
+  			<simple>${body}</simple>
+			</setBody>
+         <convertBodyTo type="String" charset="UTF-8" />
+<!--        <setProperty propertyName="CamelCharsetName">
+        <constant>utf-8</constant>
+        </setProperty>    -->
+         
+        </route>
+    </camelContext>
+</beans>
