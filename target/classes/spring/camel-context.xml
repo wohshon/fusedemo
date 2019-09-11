@@ -15,32 +15,13 @@
         <base64 lineLength="64" id="base64withLineLength64" />
 
  -->         </dataFormats>
-        <restConfiguration bindingMode="json_xml" component="servlet"/>
+        <restConfiguration bindingMode="auto" component="servlet"/>
         <rest id="rest-8acee140-1d87-4e9b-80b7-61778296f6e3" path="/rest">
             <get id="get-58247db3-200b-4b41-bf11-503df970fa6d" consumes="application/json" uri="/test">
                 <to uri="direct:test"/>
             </get>
-            <!--             <get consumes="application/json"
-                id="get-0fc3373f-e494-4166-a280-9f673a503bcc" uri="/bye">
-                <to uri="direct:bye"/>
-            </get>
-            <post id="post-d5043fb4-b5f5-4625-b70b-9f23fa06a1f8" uri="/bye">
-                <to uri="mock:update"/>
-            </post> -->
+
         </rest>
-        <!--         <route id="_route1">
-            <from id="_from1" uri="direct:hello"/>
-            <transform id="_transform1">
-                <constant>Hello World</constant>
-            </transform>
-        </route>
-        <route id="_route2">
-            <from id="_from2" uri="direct:bye"/>
-            <transform id="_transform2">
-                <constant>Bye World</constant>
-            </transform>
-        </route>
- -->
         <route id="_route3">
             <from id="_from3" uri="direct:test"/>
             <!-- 
@@ -56,10 +37,15 @@
             <setBody>
   			<simple>${body}</simple>
 			</setBody>
+             <to uri="bean:myTransformer"/>
+
+<!--
          <convertBodyTo type="String" charset="UTF-8" />
-<!--        <setProperty propertyName="CamelCharsetName">
+        
+		<setProperty propertyName="CamelCharsetName">
         <constant>utf-8</constant>
-        </setProperty>    -->
+        </setProperty>    
+-->
          
         </route>
     </camelContext>
